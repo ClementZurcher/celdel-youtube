@@ -46,14 +46,39 @@ les blobs partent en parallèle.
   Avant de publier : lister les fichiers lourds (`git ls-files -z | xargs -0 du -h | sort -rh`)
   et exclure via `.gitignore` tout ce qui dépasse quelques centaines de Ko. Vérifier d'abord
   que ces fichiers sont réellement utilisés par le skill (`grep -r "assets/" SKILL.md`) :
-  dans la pratique, les gros assets sont souvent des restes de test.
-- **Gros fichiers** : jamais en ligne de commande, toujours via `@fichier` (base64).
+  dans la pratique, les gros assets sont souvent des restes de test. Un blob volumineux se
+  transmet toujours par `@fichier` (base64), jamais en ligne de commande.
 - **Le script de publication ne doit pas vivre dans le dossier publié**, sinon il se versionne
   lui-même au passage suivant (`git ls-files` le verra).
 - **Un dépôt fraîchement créé avec `auto_init` contient un `README.md`** : la première poussée
   le remplace si le dossier local en fournit un.
 - **Publier depuis l'index** : un fichier non `git add` n'est pas publié. Construire la liste
   avec `git ls-files`, jamais par un parcours disque.
+
+## Versionner les skills d'un profil (forme du dépôt)
+
+Quand le dépôt sert à réinstaller une configuration d'agent ailleurs, un dépôt par profil, privé :
+
+```
+skills/<catégorie>/<skill>/…     les skills maison du profil, tels qu'ils sont installés
+scripts/                         les scripts que les skills invoquent
+docs/                            les guides destinés aux humains
+profil/SOUL.md                   la fiche de profil — c'est elle qui définit l'agent
+MANIFEST.tsv  install.sh  README.md  .gitignore
+```
+
+- **Ne pas embarquer les skills bundled/hub** : ils se rafraîchissent par ailleurs et deviennent des
+  copies périmées dans le dépôt. Le dépôt porte ce qui est maison.
+- **Un `THIRD_PARTY.md`** nommant les skills tiers et leur origine ; sa seule présence suffit à
+  justifier un dépôt **privé**.
+- **`install.sh` se teste** : installer pour de vrai, et vérifier qu'il échoue proprement sur un
+  profil inexistant.
+- **Un seul script pour N dépôts**, piloté par l'environnement (dossier source, nom, description,
+  message de commit) plutôt qu'avec des valeurs codées en dur : un dépôt en échec se republie seul,
+  sans rejouer les autres. La poussée reconstruit toute l'arborescence en un commit : relancer est
+  idempotent.
+- **Après publication, vérifier dépôt par dépôt** : comparer `git ls-files` local aux chemins du
+  tree distant (`?recursive=1`), et contrôler la présence du fichier de profil.
 
 ## Conséquence pour la distribution
 

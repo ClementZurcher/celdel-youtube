@@ -46,6 +46,19 @@ while IFS="$TAB" read -r skill category; do
     installed=$((installed + 1))
 done < "$HERE/MANIFEST.tsv"
 
+# Fiche de profil : c'est elle qui définit le comportement de l'assistant (SOUL.md).
+# L'existante est sauvegardée avant remplacement, jamais écrasée silencieusement.
+SOUL_SRC="$HERE/profil/SOUL.md"
+PROFILE_DIR=$(dirname "$DEST")
+if [ -f "$SOUL_SRC" ]; then
+    if [ -f "$PROFILE_DIR/SOUL.md" ] && ! cmp -s "$SOUL_SRC" "$PROFILE_DIR/SOUL.md"; then
+        cp "$PROFILE_DIR/SOUL.md" "$PROFILE_DIR/SOUL.md.bak-$(date +%Y%m%d-%H%M%S)"
+        echo "  SOUL.md existant sauvegardé (.bak)"
+    fi
+    cp "$SOUL_SRC" "$PROFILE_DIR/SOUL.md"
+    echo "  fiche de profil (SOUL.md) installée"
+fi
+
 echo
 echo "Installés : $installed   Ignorés : $skipped"
 echo "Destination : $DEST"

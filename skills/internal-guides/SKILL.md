@@ -41,6 +41,10 @@ espace — c'est ce qui distingue un guide intégré d'un document étranger.
 
 - Français simple, phrases courtes, puces à l'infinitif ou à l'impératif ; aucun jargon hors des
   blocs à copier.
+- **Ne documenter que le nécessaire.** Avant de rédiger, passer chaque prérequis au test « en
+  a-t-on besoin ? » : si un moyen plus simple atteint le même résultat, c'est lui qu'on écrit (un
+  usage rare ne justifie ni audit fournisseur ni automatisation lourde). Un prérequis non justifié
+  alourdit le guide et décourage le lecteur.
 - **Ne jamais couper le nécessaire pour raccourcir.** Ce qui reste : prérequis, skills à
   installer, blocs à copier, ce que le lecteur doit faire. Ce qui sort : quotas, tables
   d'erreurs techniques, justifications de fond.
@@ -65,5 +69,12 @@ espace — c'est ce qui distingue un guide intégré d'un document étranger.
 - Publier sans relire la page → un bloc tronqué passe inaperçu.
 - Vouloir modifier le contenu d'une page existante par `PATCH` : le schéma attendu n'est pas
   celui du markdown de création (détail et contournement dans la référence).
+- **« Installe le skill <nom> » est faux quand le skill est local** : les registres publics renvoient
+  des homonymes tiers et feraient installer le skill de quelqu'un d'autre. Nommer la source de
+  fichiers (dépôt, archive, chemin `skills/<catégorie>/…`) et préciser de ne rien installer depuis
+  un registre public.
+- **Un dépôt privé n'est pas installable par le destinataire.** Un guide qui pointe un dépôt privé
+  doit dire comment y accéder (collaborateur ajouté, dépôt public filtré, ou archive livrée) —
+  sinon il annonce une installation impossible.
 - Publier un document qui affirme des choses sur l'environnement (chemins, noms d'outils, étapes
   d'installation) sans les vérifier : un guide faux coûte plus cher qu'un guide absent.

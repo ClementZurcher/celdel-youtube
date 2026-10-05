@@ -122,4 +122,8 @@ installé (voir le skill `notion` pour la voie officielle), passer par l'API RES
 ## 7. Autres recettes
 
 - **Publier un dossier entier sur GitHub** (dépôt + arborescence en un commit, sans `gh`
-  authentifié) : `references/github-repo-push.md`.
+  authentifié), et la forme du dépôt quand on versionne les skills d'un profil :
+  `references/github-repo-push.md`.
+- **Prouver — ou disculper — un effet de bord** d'un outil lancé par une automatisation (il change
+  l'état sans le dire : marque un message comme lu, déplace, étiquette) :
+  `references/verifying-side-effects.md`.
