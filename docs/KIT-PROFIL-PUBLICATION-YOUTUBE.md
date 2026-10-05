@@ -28,7 +28,7 @@ conséquence d'un audit Google du projet (démarche séparée, à demander à Go
 
 ### 1.1 Comptes
 
-- Le compte Google **propriétaire de la chaîne** (ici `clement@celdel.com`) et la chaîne visée.
+- Le compte Google **propriétaire de la chaîne** (ici `<boite-de-reception@exemple.com>`) et la chaîne visée.
 - Le mot de passe de ce compte **n'est jamais nécessaire à l'agent** : il ne sert qu'à
   l'utilisateur, une fois, dans son propre navigateur.
 

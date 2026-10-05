@@ -15,7 +15,7 @@ LIST_PLAYLIST_ITEMS, LIST_SUPER_CHAT_EVENTS, LIST_USER_PLAYLISTS, LIST_USER_SUBS
 
 ```
 composio proxy "https://www.googleapis.com/youtube/v3/channels?part=snippet,statistics&mine=true" --toolkit youtube
-→ youtube#channelListResponse, id UCvczlVhxjwoxF3rcR8I8ZHg, titre "Clement Zurcher", @clemzuuuu
+→ youtube#channelListResponse, id <ID_DE_LA_CHAINE>, titre <nom de la chaîne>, @<pseudo>
 ```
 
 ## 3. videos.insert : autorisé, bloqué par le quota partagé

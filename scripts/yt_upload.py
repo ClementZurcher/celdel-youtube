@@ -464,7 +464,7 @@ def main() -> int:
     ap.add_argument("--expect-channel", default="", help="ID de chaîne attendu (garde-fou anti mauvais compte)")
     ap.add_argument("--finish-auth", default="", metavar="FICHIER", help="termine l'autorisation OAuth à partir de l'URL/du code dans FICHIER")
     ap.add_argument("--redirect-uri", default="http://localhost:8765/", help="URI de redirection OAuth (défaut http://localhost:8765/)")
-    ap.add_argument("--login-hint", default="", help="pré-remplit/force l'adresse du compte à autoriser (ex. clement@celdel.com)")
+    ap.add_argument("--login-hint", default="", help="pré-remplit/force l'adresse du compte à autoriser (ex. <boite-de-reception@exemple.com>)")
     ap.add_argument("--select-account", action="store_true", help="force l'écran de choix du compte Google")
     ap.add_argument("--include-granted-scopes", action="store_true",
                     help="fusionne les scopes déjà accordés au client (à éviter sur un client partagé type n8n)")

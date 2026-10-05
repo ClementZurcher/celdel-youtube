@@ -71,8 +71,12 @@ reste hors du périmètre de la mesure : déclencheurs de la plateforme, autres 
 automatisations branchées sur le même compte — un scénario externe partageant le même projet OAuth
 est un candidat courant.
 
-- Déclencheurs actifs : ils se consultent dans le dashboard de la plateforme ;
-  `composio dev triggers status` exige un projet développeur (`composio dev init`).
+- Déclencheurs : `composio triggers list <toolkit>` montre le **catalogue**. Chez Gmail les deux
+  entrées (`GMAIL_NEW_GMAIL_MESSAGE`, `GMAIL_EMAIL_SENT_TRIGGER`) sont de `type: poll` — un
+  déclencheur actif interroge donc la boîte en continu et reste un candidat à ne pas écarter.
+  Les **instances actives** ne se listent pas avec la clé du compte (l'API de gestion renvoie
+  `401 APIKey_InvalidAPIKey` sur une clé utilisateur, et `composio dev triggers status` exige un
+  projet développeur, `composio dev init`) : renvoyer à la section Triggers du dashboard.
 - Log d'accès du fournisseur, pour fermer la boucle : Gmail → « Dernière activité du compte » →
   Détails (type d'accès, IP, horodatage). Des accès API à des heures où rien de connu ne tourne
   désignent un autre client.

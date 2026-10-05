@@ -69,13 +69,61 @@ Relire la page créée (`GET …/markdown`) et contrôler : longueur du contenu,
 titre de section attendu, absence de la version précédente. Un `200` de création ne prouve pas
 ce que la page contient.
 
+Relevé plus fin, quand le document contient des blocs à copier : `GET /v1/blocks/<page_id>/children?page_size=100`
+puis compter les blocs par type (`heading_2`, `bulleted_list_item`, `code`) et relire les titres
+de section. C'est ce qui attrape le cas où le markdown a été mal converti — un guide publié sans
+bloc `code` a perdu ses commandes à copier, ce que la relecture du markdown ne montre pas
+toujours. La réponse de création contient l'`url` de la page : c'est le lien à rendre à
+l'utilisateur, pas l'identifiant.
+
+Pour énumérer les pages enfants d'une page parente : `GET /v1/blocks/<parent_id>/children`
+et suivre `has_more` + `next_cursor` (`?start_cursor=…`) — la première page ne montre pas tout, et
+c'est le seul moyen de vérifier qu'une page archivée ne fait plus doublon.
+
 ## Modifier le contenu d'une page existante
 
 `PATCH /v1/pages/{id}/markdown` avec `{"markdown": "…"}` est **refusé** :
-`400 validation_error — body.type should be defined`. Ne pas deviner le schéma attendu.
-Procédure qui fonctionne : **archiver la page** (`PATCH /v1/pages/{id}` avec `{"archived": true}`)
-puis **recréer** une page au même emplacement avec le nouveau contenu, et relire. L'archivage
-place la page dans la corbeille Notion (réversible) — le signaler à l'utilisateur.
+`400 validation_error — body.type should be defined`. Ne pas deviner le schéma attendu — et ne pas
+en conclure que l'API ignore le markdown : la **création** l'accepte, seule la mise à jour est
+refusée.
+
+**Corriger une section (le cas courant).** Découper la page aux titres : relever l'`id` du
+`heading_2` visé et des blocs qui le suivent jusqu'au `heading_2` suivant, supprimer ces blocs,
+puis réinsérer les nouveaux **après le titre** (`after` = `id` du titre). Le reste de la page est
+intact — indispensable quand l'utilisateur a déjà validé le document, et bien préférable à
+l'archivage.
+
+```bash
+# 1. relever les blocs et leurs id, dans l'ordre
+composio proxy "https://api.notion.com/v1/blocks/<page_id>/children?page_size=100" --toolkit notion \
+  -H "Notion-Version: 2025-09-03"
+# 2. supprimer chaque bloc de la section (les titres voisins délimitent la plage)
+composio proxy "https://api.notion.com/v1/blocks/<block_id>" --toolkit notion -X DELETE \
+  -H "Notion-Version: 2025-09-03"
+# 3. réinsérer après le titre : PATCH /v1/blocks/<page_id>/children
+#    -d '{"children":[…],"after":"<id du heading_2>"}'
+```
+
+Après chaque section traitée, **relire la page** avant de traiter la suivante : les index relevés
+avant l'édition ne survivent pas aux blocs insérés.
+
+⚠️ La réponse d'insertion ne dit pas ce qui a été créé : `results` peut renvoyer toute la liste des
+enfants (35 entrées pour 8 blocs insérés). Compter les blocs **en relisant la page**, jamais depuis
+cette réponse.
+
+**Corriger un bloc isolé (le plus économe).** Pour ne changer que le texte d'une puce ou d'un
+bloc de code, `PATCH /v1/blocks/<block_id>` avec `{<type>: {"rich_text": […]}}` : le reste de la
+page n'est pas touché, contrairement au découpage de section. Sur un bloc `code`, réindiquer
+`"language": "plain text"`, sinon la coloration peut se perdre. C'est la voie à préférer quand
+l'utilisateur a validé la page et qu'une seule formule change.
+
+⚠️ Cibler le remplacement avec précision : une substitution large (« remplacer “privé” par
+“public” ») casse les phrases où le mot a un autre sens — un guide qui parle aussi d'une vidéo
+« en privé ». Remplacer la formule exacte (« dépôt privé »), jamais le mot seul.
+
+**Réécrire toute la page** : archiver (`PATCH /v1/pages/{id}` avec `{"archived": true}`) puis
+recréer au même emplacement, et relire. L'archivage place la page dans la corbeille Notion
+(réversible) — le signaler à l'utilisateur.
 
 ## Règles
 

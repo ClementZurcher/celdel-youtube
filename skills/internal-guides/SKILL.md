@@ -48,6 +48,13 @@ espace — c'est ce qui distingue un guide intégré d'un document étranger.
 - **Ne jamais couper le nécessaire pour raccourcir.** Ce qui reste : prérequis, skills à
   installer, blocs à copier, ce que le lecteur doit faire. Ce qui sort : quotas, tables
   d'erreurs techniques, justifications de fond.
+- **Les prérequis s'écrivent en étapes, jamais en état.** « Un projet Google Cloud avec l'API
+  activée » ne sert à rien à qui n'en a aucun : écrire pour quelqu'un qui n'a **rien** fait.
+  Étapes numérotées, chemins de menu exacts et liens cliquables (« menu ☰ → IAM et
+  administration → Créer un projet »), y compris les pièges de libellé — le projet ne se crée
+  **pas** dans « API et services », et l'écrire évite au lecteur l'aller-retour classique.
+  De même, donner le lien de ce qu'il faut récupérer (dépôt, archive) et comment y accéder.
+  Un lien nu n'est pas une consigne : il faut aussi dire ce qu'on en fait.
 - **Une limite matérielle = une ligne**, sans section ni paragraphe (« le passage en public se
   fait en un clic »). Ne pas empiler les avertissements.
 - **Ne jamais répéter une information** : elle apparaît une fois, à l'endroit où elle sert.
