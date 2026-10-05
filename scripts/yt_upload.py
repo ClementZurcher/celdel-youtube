@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Publication automatisée d'une vidéo YouTube — deux voies.
+"""Publication automatisée d'une vidéo YouTube, deux voies.
 
 Voie A (--via composio) : réutilise le compte YouTube déjà connecté dans Composio,
     via l'endpoint officiel videos.insert (le jeton porte le scope d'upload ; la
@@ -249,7 +249,7 @@ def whoami(args) -> int:
     token_path = args.token or (os.path.join(os.path.dirname(os.path.abspath(args.client_secret)), "token.json")
                                 if args.client_secret else "")
     if not token_path or not os.path.exists(token_path):
-        fail(f"aucun jeton trouvé ({token_path or 'chemin inconnu'}) — lancer d'abord --print-auth-url puis --finish-auth")
+        fail(f"aucun jeton trouvé ({token_path or 'chemin inconnu'}), lancer d'abord --print-auth-url puis --finish-auth")
     try:
         creds = Credentials.from_authorized_user_file(token_path, SCOPES)
         if creds.expired and creds.refresh_token:
@@ -267,7 +267,7 @@ def whoami(args) -> int:
     print(json.dumps(info, ensure_ascii=False, indent=2))
     if args.expect_channel:
         if it["id"] != args.expect_channel:
-            fail(f"ce jeton administre {it['id']} et non {args.expect_channel} — "
+            fail(f"ce jeton administre {it['id']} et non {args.expect_channel}, "
                  "mauvais compte Google : refaire l'autorisation avec le compte propriétaire")
         print("Chaîne confirmée : les uploads partiront bien ici.")
     return 0
@@ -293,7 +293,7 @@ def print_auth_url(args) -> int:
     os.chmod(state_path, 0o600)
     print("1) Ouvre cette URL dans ton navigateur (celui où tu es connecté à Google) et autorise :\n")
     print(url)
-    print(f"\n2) Tu seras redirigé vers {flow.redirect_uri}?code=…&scope=… — la page peut afficher")
+    print(f"\n2) Tu seras redirigé vers {flow.redirect_uri}?code=…&scope=…, la page peut afficher")
     print("   une erreur, c'est normal : ce qui compte est l'URL dans la barre d'adresse.")
     print("   Copie cette URL COMPLÈTE et colle-la dans un fichier, puis lance :")
     print(f"     yt_upload.py --finish-auth /chemin/vers/url.txt --client-secret {args.client_secret}")
@@ -304,7 +304,7 @@ def print_auth_url(args) -> int:
 def report_token_lifetime(token) -> None:
     """Détecte la bombe à retardement du statut « Testing » : jeton valable 7 jours."""
     if not isinstance(token, dict):
-        print("Statut de publication du consentement inconnu — vérifier Audience → « In production ».")
+        print("Statut de publication du consentement inconnu, vérifier Audience → « In production ».")
         return
     ttl = token.get("refresh_token_expires_in")
     if ttl:
@@ -365,7 +365,7 @@ def upload_via_oauth(args, body: dict) -> int:
         from googleapiclient.discovery import build
         from googleapiclient.http import MediaFileUpload
     except ImportError as exc:
-        fail(f"bibliothèques Google absentes ({exc}) — utilise l'interpréteur du venv Hermes documenté")
+        fail(f"bibliothèques Google absentes ({exc}), utilise l'interpréteur du venv Hermes documenté")
 
     scope = ["https://www.googleapis.com/auth/youtube.upload",
              "https://www.googleapis.com/auth/youtube.force-ssl"]
@@ -412,15 +412,15 @@ def print_kit(args, description: str, tags: list[str]) -> None:
     chapters = parse_chapters(description)
     hashtags = [w for w in description.split() if w.startswith("#")]
     print("=" * 72)
-    print("PAQUET PRÊT À COLLER — YouTube Studio")
+    print("PAQUET PRÊT À COLLER, YouTube Studio")
     print("=" * 72)
     print(f"\n### TITRE ({len(args.title)}/{TITLE_MAX} caractères)\n{args.title}")
-    print(f"\n### DESCRIPTION ({len(description)}/{DESC_MAX} caractères) — coller tel quel")
+    print(f"\n### DESCRIPTION ({len(description)}/{DESC_MAX} caractères), coller tel quel")
     print(description.rstrip())
-    print(f"\n### TAGS ({len(','.join(tags))}/{TAGS_MAX} caractères) — champ « Tags », séparés par des virgules")
+    print(f"\n### TAGS ({len(','.join(tags))}/{TAGS_MAX} caractères), champ « Tags », séparés par des virgules")
     print(", ".join(tags) if tags else "(aucun)")
     print(f"\n### HASHTAGS (3 max utiles)\n{' '.join(hashtags[:3]) if hashtags else '(aucun)'}")
-    print(f"\n### CATÉGORIE\n{args.category} — {CATEGORIES.get(args.category, '?')}")
+    print(f"\n### CATÉGORIE\n{args.category}, {CATEGORIES.get(args.category, '?')}")
     print(f"\n### CHAPITRES ({len(chapters)} détectés)")
     for _sec, line in chapters:
         print(f"  {line}")
@@ -506,14 +506,14 @@ def main() -> int:
     if problems:
         for p in problems:
             print(f"AVERTISSEMENT : {p}", file=sys.stderr)
-        fail(f"{len(problems)} problème(s) bloquant(s) — corrige avant d'envoyer")
+        fail(f"{len(problems)} problème(s) bloquant(s), corrige avant d'envoyer")
 
     if args.kit:
         print_kit(args, description, tags)
         return 0
 
     if args.check:
-        print("Contrôles OK — aucun envoi effectué (--check).")
+        print("Contrôles OK, aucun envoi effectué (--check).")
         return 0
 
     if body["status"]["privacyStatus"] == "public" and not args.confirm_public:

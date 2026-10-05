@@ -1,4 +1,4 @@
-# Skills Hermès — YouTube (Celdel AI)
+# Skills Hermès : YouTube (Celdel AI)
 
 Préparer **et** publier les vidéos YouTube : titre, description, chapitres, tags, miniature, téléversement, vérifications.
 
@@ -17,7 +17,7 @@ l'assistant. À recopier dans `<profil>/SOUL.md` sur une nouvelle installation.
 
 ## Le strict minimum
 
-1. `client_secret.json` — identifiant OAuth « Application de bureau », créé une fois dans Google Cloud
+1. `client_secret.json`, identifiant OAuth « Application de bureau », créé une fois dans Google Cloud
 2. les skills `youtube-publish` et `youtube-metadata` (+ `youtube-content`, déjà fourni avec Hermès)
 3. `scripts/yt_upload.py` et un Python avec `googleapiclient` / `google_auth_oauthlib`
 

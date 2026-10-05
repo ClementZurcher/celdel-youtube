@@ -9,24 +9,24 @@ les blobs partent en parallèle.
 
 ## Procédure
 
-1. **Identité** — `GET /user` : c'est ce compte qui possédera le dépôt. L'annoncer à
+1. **Identité**, `GET /user` : c'est ce compte qui possédera le dépôt. L'annoncer à
    l'utilisateur avant de créer quoi que ce soit.
-2. **Créer le dépôt** — `POST /user/repos` avec
+2. **Créer le dépôt**, `POST /user/repos` avec
    `{"name": "…", "private": true, "description": "…", "auto_init": true}`.
    Le plan gratuit autorise les dépôts privés. Un échec « already exists » n'est pas un échec :
    `GET /repos/{owner}/{name}` puis continuer.
-3. **Base** — `GET /repos/{o}/{r}/git/ref/heads/{branche}` → sha du commit ;
+3. **Base**, `GET /repos/{o}/{r}/git/ref/heads/{branche}` → sha du commit ;
    `GET /repos/{o}/{r}/git/commits/{sha}` → sha de l'arbre de base (`auto_init` en a créé un).
-4. **Blobs** — un `POST /repos/{o}/{r}/git/blobs` par fichier, corps
+4. **Blobs**, un `POST /repos/{o}/{r}/git/blobs` par fichier, corps
    `{"content": "<base64>", "encoding": "base64"}`, en parallèle (4–6 fils). Consigner la
    progression tous les 25 fichiers.
-5. **Arbre** — `POST /repos/{o}/{r}/git/trees` avec
+5. **Arbre**, `POST /repos/{o}/{r}/git/trees` avec
    `{"base_tree": "<sha>", "tree": [{"path": …, "mode": "100644"|"100755", "type": "blob", "sha": …}]}`.
    Le mode `100755` se déduit du bit exécutable du fichier local (sinon les scripts arrivent
    non exécutables).
-6. **Commit puis branche** — `POST /git/commits` avec `{message, tree, parents: [<sha base>]}`,
+6. **Commit puis branche**, `POST /git/commits` avec `{message, tree, parents: [<sha base>]}`,
    puis `PATCH /git/refs/heads/{branche}` avec `{"sha": <commit>, "force": false}`.
-7. **Vérifier en relisant le dépôt** — `GET /repos/{o}/{r}/git/trees/{branche}?recursive=1` et
+7. **Vérifier en relisant le dépôt**, `GET /repos/{o}/{r}/git/trees/{branche}?recursive=1` et
    comparer l'ensemble des chemins à `git ls-files` du dossier local (manquants / en trop).
    Le code de sortie du script ne prouve rien.
 
@@ -37,7 +37,7 @@ les blobs partent en parallèle.
   échouer précisément les fichiers tombés dans la fenêtre. Nom unique par appel, et pas de
   suppression pendant l'exécution du lot.
 - **Erreurs avalées comme des succès** : la CLI ne renvoie pas de code HTTP. GitHub signe ses
-  erreurs par un champ `documentation_url` — jamais présent sur un succès. Un `422` de création
+  erreurs par un champ `documentation_url`, jamais présent sur un succès. Un `422` de création
   (« already exists ») traité comme un succès fait tomber le script au premier accès de champ.
 - **Gros fichiers : la limite est basse et bruyante.** Un fichier de 3,9 Mo (≈ 5,2 Mo en
   base64) est refusé par le proxy : `413 Request Entity Too Large` sur
@@ -63,7 +63,7 @@ Quand le dépôt sert à réinstaller une configuration d'agent ailleurs, un dé
 skills/<catégorie>/<skill>/…     les skills maison du profil, tels qu'ils sont installés
 scripts/                         les scripts que les skills invoquent
 docs/                            les guides destinés aux humains
-profil/SOUL.md                   la fiche de profil — c'est elle qui définit l'agent
+profil/SOUL.md                   la fiche de profil, c'est elle qui définit l'agent
 MANIFEST.tsv  install.sh  README.md  .gitignore
 ```
 

@@ -11,12 +11,12 @@ metadata:
     related_skills: [google-oauth-setup, notion, youtube-publish]
 ---
 
-# Composio CLI — lire et écrire dans des API tierces déjà connectées
+# Composio CLI : lire et écrire dans des API tierces déjà connectées
 
 ## When to Use / Quand l'utiliser
 
 Quand un service est **déjà connecté** dans Composio (Gmail, Notion, YouTube, Sheets…)
-et qu'il faut le piloter sans monter un OAuth dédié — ou quand le toolkit n'expose pas
+et qu'il faut le piloter sans monter un OAuth dédié, ou quand le toolkit n'expose pas
 l'outil voulu alors que l'API REST brute le propose (ex. aucun outil d'upload YouTube
 alors que `videos.insert` existe). Pour un accès Google durable avec ses propres
 identifiants, préférer `google-oauth-setup`.
@@ -42,10 +42,10 @@ composio proxy "<url_complète>" --toolkit <slug> [-H "Nom: valeur"]
 
 Pour connaître le statut réel d'un appel, passer par le sandbox :
 `composio run -f script.js` injecte `proxy("<slug>")`, qui renvoie un `fetch()` lié au compte
-connecté — lire `res.status`, `res.headers`, `res.text()`. C'est indispensable : la CLI
+connecté, lire `res.status`, `res.headers`, `res.text()`. C'est indispensable : la CLI
 n'affiche **rien** pour une réponse d'erreur ou sans corps JSON.
 
-## 3. Écritures — toujours via la CLI avec `-d`
+## 3. Écritures : toujours via la CLI avec `-d`
 
 ```bash
 composio proxy "<url>" --toolkit <slug> -X POST \
@@ -71,7 +71,7 @@ Une réponse de la CLI ne prouve rien : l'absence de sortie est ambiguë (voir �
 
 ## 5. Pièges
 
-- **Échec silencieux** : la CLI n'imprime rien sur une erreur HTTP ou une réponse vide — un
+- **Échec silencieux** : la CLI n'imprime rien sur une erreur HTTP ou une réponse vide, un
   `429` ou un `404` ressemble à un succès. En cas de doute, rejouer via `composio run` et lire
   `res.status`.
 - **En-têtes d'API obligatoires** : les omettre produit une erreur trompeuse (Notion exige
@@ -81,7 +81,7 @@ Une réponse de la CLI ne prouve rien : l'absence de sortie est ambiguë (voir �
   plateforme et non d'une limite propre. Ne pas promettre un volume sans vérifier.
 - **Domaines d'authentification restreints** : le proxy n'injecte le jeton que pour les
   domaines de l'API du toolkit visé. Un endpoint voisin (ex. `userinfo` Google via le toolkit
-  YouTube) renvoie `401` — ce n'est pas un problème de jeton, c'est un périmètre d'injection.
+  YouTube) renvoie `401`, ce n'est pas un problème de jeton, c'est un périmètre d'injection.
 - **`composio dev …`** (toolkits, auth-configs, connected-accounts) exige un projet
   développeur dans le répertoire courant (`composio dev init`) ; sinon « No developer project
   configured for this directory ».
@@ -92,20 +92,20 @@ Une réponse de la CLI ne prouve rien : l'absence de sortie est ambiguë (voir �
   échouer la lecture (`ENOENT … /tmp/….json`) et perdent les fichiers concernés. Viser 4–6 appels
   en parallèle, pas plus.
 - **Aucun code HTTP dans la sortie** : dans un script qui enchaîne les appels, ne jamais conclure
-  « le JSON se parse, donc c'est un succès » — une erreur sort aussi en JSON. S'appuyer sur la
+  « le JSON se parse, donc c'est un succès », une erreur sort aussi en JSON. S'appuyer sur la
   **signature d'erreur propre à l'API** (GitHub : champ `documentation_url`, jamais présent sur un
   succès ; Google : `error.code`).
 - **Création idempotente** : un `POST` de création sur un objet déjà existant échoue proprement
   (« already exists ») ; lire l'objet et poursuivre le lot au lieu d'abandonner.
 
-## 6. Recette — créer une page Notion quand `NOTION_API_KEY` est absent
+## 6. Recette : créer une page Notion quand `NOTION_API_KEY` est absent
 
 Si la connexion Notion existe dans Composio mais qu'aucun jeton local ni CLI `ntn` n'est
 installé (voir le skill `notion` pour la voie officielle), passer par l'API REST :
 
 1. Retrouver la page parente :
    `composio proxy "https://api.notion.com/v1/search" --toolkit notion -X POST -H "Notion-Version: 2025-09-03" -H "Content-Type: application/json" -d '{"query":""}'`
-   — ne renvoie que ce qui est partagé avec l'intégration.
+   ne renvoie que ce qui est partagé avec l'intégration.
 2. Créer la sous-page :
    `composio proxy "https://api.notion.com/v1/pages" --toolkit notion -X POST -H "Notion-Version: 2025-09-03" -H "Content-Type: application/json" -d @payload.json`
    avec
@@ -124,6 +124,6 @@ installé (voir le skill `notion` pour la voie officielle), passer par l'API RES
 - **Publier un dossier entier sur GitHub** (dépôt + arborescence en un commit, sans `gh`
   authentifié), et la forme du dépôt quand on versionne les skills d'un profil :
   `references/github-repo-push.md`.
-- **Prouver — ou disculper — un effet de bord** d'un outil lancé par une automatisation (il change
+- **Prouver, ou disculper, un effet de bord** d'un outil lancé par une automatisation (il change
   l'état sans le dire : marque un message comme lu, déplace, étiquette) :
   `references/verifying-side-effects.md`.

@@ -1,4 +1,4 @@
-# Guide rapide — publier sur YouTube depuis Hermès
+# Guide rapide : publier sur YouTube depuis Hermès
 
 Version courte, opérationnelle. Mise en place une fois, puis une commande par vidéo.
 
@@ -11,7 +11,7 @@ Version courte, opérationnelle. Mise en place une fois, puis une commande par v
 | Compte | Le compte Google **propriétaire de la chaîne**. Son mot de passe n'est jamais donné à l'agent : il ne sert qu'à toi, une fois, dans ton navigateur |
 | Google Cloud | Un projet, l'API **YouTube Data API v3** activée, un client OAuth **Application de bureau** (`client_secret.json`) |
 | Machine | Un Python avec `googleapiclient` et `google_auth_oauthlib`, plus le script `yt_upload.py` |
-| Coût | 0 € — API gratuite, 100 téléversements/jour |
+| Coût | 0 €, API gratuite, 100 téléversements/jour |
 
 ---
 
@@ -95,7 +95,7 @@ Fais tout : métadonnées, chapitres, tags, miniature, téléversement. Laisse e
 | `This request contains scopes that cannot be requested together` | `youtube.*` + `drive.file` (souvent via `include_granted_scopes`) | régénérer l'URL **sans** `include_granted_scopes` |
 | `Access blocked` / « limitée aux utilisateurs de votre organisation » | consentement **Interne** + mauvais compte connecté | `--login-hint` + `--select-account`, ou passer en **Externe** + utilisateur test |
 | « This browser or app may not be secure » | Google bloque la connexion depuis un navigateur automatisé | ne pas automatiser la connexion : l'utilisateur autorise lui-même |
-| `quotaExceeded — Video Uploads` | 100 téléversements/jour atteints | attendre le lendemain |
+| `quotaExceeded, Video Uploads` | 100 téléversements/jour atteints | attendre le lendemain |
 | Vidéo en ligne mais **privée** alors que `public` demandé | projet Google non audité | audit API, ou bascule manuelle dans Studio |
 
 Non-erreur à ignorer : `admin.google.com` refuse l'accès → cette console n'est pas nécessaire

@@ -1,4 +1,4 @@
-# Kit — construire un profil Hermes « publication YouTube »
+# Kit : construire un profil Hermes « publication YouTube »
 
 Document autonome : prérequis, contenu du profil, contenu de la conversation, commandes,
 garde-fous. Rédigé le 2026-10-05 pour le profil `youtube` de Celdel AI.
@@ -36,7 +36,7 @@ conséquence d'un audit Google du projet (démarche séparée, à demander à Go
 
 | Étape | Où | Piège |
 |---|---|---|
-| 1. Créer un projet | `console.cloud.google.com/projectcreate` — Menu ☰ → **IAM et administration** → Créer un projet | ⚠️ Pas dans « API et services » |
+| 1. Créer un projet | `console.cloud.google.com/projectcreate`, Menu ☰ → **IAM et administration** → Créer un projet | ⚠️ Pas dans « API et services » |
 | 2. Activer l'API | `console.cloud.google.com/apis/library/youtube.googleapis.com` → **Activer** | Aucune carte bancaire requise |
 | 3. Écran de consentement | `console.cloud.google.com/auth/overview` → Get started | **Interne** si compte Google Workspace (aucune vérification, pas de liste d'utilisateurs test, **pas de jeton limité à 7 jours**) ; **Externe** sinon |
 | 4. Utilisateurs test | `console.cloud.google.com/auth/audience` | Uniquement si **Externe** → ajouter l'adresse propriétaire |
@@ -45,7 +45,7 @@ conséquence d'un audit Google du projet (démarche séparée, à demander à Go
 Deux pièges de scopes, tous deux rencontrés en vrai :
 
 - **Ne pas combiner `youtube.*` et `drive.file`** dans une même autorisation → `400
-  invalid_request — This request contains scopes that cannot be requested together`.
+  invalid_request, This request contains scopes that cannot be requested together`.
 - Sur un client OAuth **partagé** (ex. déjà utilisé par n8n), ne pas envoyer
   `include_granted_scopes=true` : il réinjecte les scopes déjà accordés (`drive.file`) et
   déclenche l'erreur ci-dessus.
@@ -70,12 +70,12 @@ Fichiers attendus (droits `600`, jamais affichés ni collés dans le chat) :
 ### 1.4 Optionnel
 
 - **Lecture avancée** : CLI `composio` (connexion YouTube active) pour stats/vidéos/playlists.
-- **Publier en public par API** : demander l'**audit** YouTube API du projet — sinon prévoir
+- **Publier en public par API** : demander l'**audit** YouTube API du projet, sinon prévoir
   la bascule manuelle en public dans Studio.
 
 ---
 
-## 2. Contenu du profil — fichier `SOUL.md`
+## 2. Contenu du profil : fichier `SOUL.md`
 
 À coller tel quel dans `<profil>/SOUL.md`.
 

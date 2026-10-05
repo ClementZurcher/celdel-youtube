@@ -1,4 +1,4 @@
-# Publier sur YouTube avec l'assistant IA — note de présentation
+# Publier sur YouTube avec l'assistant IA : note de présentation
 
 Document destiné à la direction. Objectif : expliquer ce que l'outil fait, ce qu'il
 demande, ce qu'il coûte, et ce qu'il reste à valider. Aucune connaissance technique requise.
@@ -35,11 +35,11 @@ métadonnées homogène d'une vidéo à l'autre.
 | Valider par une vidéo de test, en privé | Direction + technique | ~15 min |
 
 Coût de fonctionnement : **0 €** (l'API YouTube est gratuite, dans la limite de 100
-téléversements par jour — très au-delà de notre rythme).
+téléversements par jour, très au-delà de notre rythme).
 
 ---
 
-## 4. Sécurité et contrôle — les points qui rassurent
+## 4. Sécurité et contrôle : les points qui rassurent
 
 1. **Rien ne part en public sans validation humaine.** La vidéo est téléversée en
    **privé** par défaut ; la mise en public est un feu vert explicite.

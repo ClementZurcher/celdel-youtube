@@ -37,7 +37,7 @@ prête dans le navigateur (voir le blocage ci-dessous), et la voie A est non fia
 écriture.
 
 Rappel de la restriction : un projet Google non vérifié créé après le 28/07/2020 uploade
-en **privé uniquement** jusqu'à l'audit — prévoir que la dernière bascule en public se
+en **privé uniquement** jusqu'à l'audit, prévoir que la dernière bascule en public se
 fasse à la main dans Studio (un clic) tant que l'audit n'est pas passé.
 
 ### Ce qui bloque réellement : le client OAuth, jamais l'outil
@@ -51,12 +51,12 @@ Conséquence directe : **brancher un MCP YouTube ne contourne rien**. Un MCP est
 protocole d'appel ; il lui faut de toute façon un client OAuth. Google ne publie pas de
 serveur MCP YouTube officiel ; les serveurs communautaires sérieux
 (`vapvarun/youtube-mcp`, `pauling-ai/youtube-mcp-server`) exigent explicitement *tes*
-identifiants Google Cloud (« bring your own credentials ») — donc même quota (100/jour)
+identifiants Google Cloud (« bring your own credentials »), donc même quota (100/jour)
 et même restriction « privé jusqu'à audit » que la voie B. Un MCP hébergé par un tiers
 te ferait hériter de **son** quota, comme Composio.
 
 Donc : remplacer Composio par un MCP ne résout le problème que si l'on apporte ses propres
-identifiants — et ce n'est pas le MCP qui apporte quoi que ce soit, c'est le projet Google.
+identifiants, et ce n'est pas le MCP qui apporte quoi que ce soit, c'est le projet Google.
 
 ### MCP dans Hermès (si tu veux malgré tout la voie D)
 
@@ -69,14 +69,14 @@ hermes config set mcp_servers.youtube.command uvx
 hermes config set mcp_servers.youtube.args '["youtube-mcp"]'
 ```
 
-Le serveur lit `~/.config/youtube-mcp/client_secret.json` — donc retour à la case voie B,
+Le serveur lit `~/.config/youtube-mcp/client_secret.json`, donc retour à la case voie B,
 mais en plus verbeux que le script `yt_upload.py` déjà prêt.
 
 Le toolkit `youtube` de Composio n'expose **aucun** outil d'upload (27 outils : lecture,
 playlists, commentaires). Mais `composio proxy` / `proxy()` attaquent directement
 `https://www.googleapis.com/upload/youtube/v3/videos`, avec l'auth injectée.
 
-## Voie A — proxy Composio
+## Voie A : proxy Composio
 
 ```bash
 composio run -f _probe.js          # teste la porte quota sans envoyer d'octets vidéo
@@ -90,7 +90,7 @@ Le script complet est `~/.hermes/profiles/youtube/workspace/yt-publish/yt_upload
 Pièges spécifiques :
 - **Le proxy ne transmet pas le corps des requêtes en écriture** (mesuré 2026-10-02) : un `PUT`
   renvoie systématiquement `400 Invalid JSON payload received. Unknown name "": Root element
-  must be a message` — le corps n'arrive jamais. En `POST`, la réponse est masquée par le 429
+  must be a message`, le corps n'arrive jamais. En `POST`, la réponse est masquée par le 429
   de quota, évalué **avant** la lecture du corps : un 429 ne prouve donc pas que le corps est
   passé. Test rapide : un `PUT` qui renvoie ce 400 = corps perdu. Conclusion : ne pas compter
   sur le proxy Composio pour téléverser ni pour modifier des métadonnées ; il reste bon pour
@@ -104,7 +104,7 @@ Pièges spécifiques :
   passée (un scope manquant renvoie 403 avant la vérification de quota) ; un 400
   `Root element must be a message` signifie que le corps JSON n'a pas été transmis.
 
-## Voie B — OAuth propre
+## Voie B : OAuth propre
 
 **Procédure sans navigateur local** (le cas normal quand l'agent tourne sur une machine
 distante) :
@@ -124,9 +124,9 @@ locaux en `chmod 600` ; ne jamais les afficher ni les coller dans la conversatio
 
 Pièges rencontrés sur le terrain :
 - **`include_granted_scopes=true` sur un client OAuth partagé** (ex. un client déjà utilisé
-  par n8n) fait fusionner les scopes accordés par le passé — typiquement `drive.file`.
+  par n8n) fait fusionner les scopes accordés par le passé, typiquement `drive.file`.
   Google **refuse de combiner les scopes `youtube.*` avec `drive.file`** dans une même
-  autorisation : `HTTP 400 invalid_request — « This request contains scopes that cannot be
+  autorisation : `HTTP 400 invalid_request, « This request contains scopes that cannot be
   requested together »`. Correctif : ne pas envoyer `include_granted_scopes` (défaut du
   script), ou utiliser des autorisations incrémentales séparées.
 - **`login_hint` + `prompt=select_account`** sont indispensables quand le navigateur de
@@ -139,22 +139,22 @@ Pièges rencontrés sur le terrain :
 
 **Variantes, même identifiants Google Cloud** :
 
-- **B1 (script `yt_upload.py --via oauth`)** — la plus directe.
-- **B2 (auth config personnalisée dans Composio)** — garder Composio et ses outils, mais
+- **B1 (script `yt_upload.py --via oauth`)**, la plus directe.
+- **B2 (auth config personnalisée dans Composio)**, garder Composio et ses outils, mais
   avec *tes* identifiants : dashboard → Authentication management → Create Auth Config →
   toolkit YouTube → OAuth2 → activer « Use your own developer credentials » → Client ID +
   Secret. La doc Composio confirme la motivation : « Composio's default OAuth app shares
   quota across all users. Your own app gets a dedicated quota ». Utile si tu veux garder les
   20+ outils YouTube de Composio **et** ton quota propre.
 
-### Chemins exacts dans la console (2026) — à donner tels quels à l'utilisateur
+### Chemins exacts dans la console (2026) : à donner tels quels à l'utilisateur
 
 | Étape | Où | Lien direct |
 |---|---|---|
 | 1. Créer le projet | Menu ☰ → **IAM et administration** → **Créer un projet** (⚠️ **pas** dans « API et services ») | console.cloud.google.com/projectcreate |
 | 2. Activer l'API | **API et services** → **Bibliothèque** → « YouTube Data API v3 » → Activer | console.cloud.google.com/apis/library/youtube.googleapis.com |
 | 3. Consentement | Menu ☰ → **Google Auth platform** → **Get started** (App name, e-mail d'assistance, **Audience = Interne** si le compte est un Google Workspace, sinon Externe, e-mail de contact, acceptation de la politique) | console.cloud.google.com/auth/overview |
-| 4. Utilisateurs test | **Google Auth platform** → **Audience** → Utilisateurs test → ajouter l'adresse du propriétaire de la chaîne — **uniquement si Audience = Externe** | console.cloud.google.com/auth/audience |
+| 4. Utilisateurs test | **Google Auth platform** → **Audience** → Utilisateurs test → ajouter l'adresse du propriétaire de la chaîne, **uniquement si Audience = Externe** | console.cloud.google.com/auth/audience |
 | 5. Client OAuth | **Google Auth platform** → **Clients** → Créer un client → type **Application de bureau** → télécharger le JSON | console.cloud.google.com/auth/clients |
 
 La bibliothèque se trouve bien sous « API et services », mais le **projet** non : c'est une
@@ -178,7 +178,7 @@ la traite comme interne).
 
 Un consentement **Externe resté en Testing** délivre un jeton de rafraîchissement valable
 **7 jours** (documenté par Google). Re-authentifier ne fait que repousser de 7 jours. Le
-correctif est **Audience → « Publish app »** (statut « In production ») — l'application peut
+correctif est **Audience → « Publish app »** (statut « In production »), l'application peut
 rester **non vérifiée**, ce qui est acceptable pour un usage personnel, mais « Publish app »
 peut être grisé si les champs de marque (page d'accueil, politique de confidentialité,
 domaine autorisé) manquent.
@@ -202,7 +202,7 @@ Le premier lancement ouvre le flux d'autorisation et écrit `token.json` (chmod 
 Ne jamais demander ni saisir de mot de passe : l'utilisateur s'authentifie lui-même
 dans son navigateur ; les secrets restent hors conversation.
 
-## Voie C — navigateur (YouTube Studio)
+## Voie C : navigateur (YouTube Studio)
 
 ⚠️ **Connexion Google impossible en automatisation** (vérifié 2026-10-02) : Google refuse
 un navigateur piloté par CDP. Après l'e-mail, on atterrit sur

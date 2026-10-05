@@ -90,9 +90,9 @@ redémarrage nécessaire (pas de hot-reload).
 
 | Requête | Résultat | Lecture |
 |---|---|---|
-| `PUT /youtube/v3/videos?part=snippet` (corps JSON) | `400 Root element must be a message` | corps perdu — reproduit 9 fois sur 9 |
+| `PUT /youtube/v3/videos?part=snippet` (corps JSON) | `400 Root element must be a message` | corps perdu, reproduit 9 fois sur 9 |
 | `PUT /upload/youtube/v3/videos?uploadType=resumable` (corps JSON) | `400 Root element must be a message` | corps perdu |
-| `POST /upload/youtube/v3/videos?uploadType=resumable` (corps JSON) | `429` quota | ambigu : le quota est évalué avant la lecture du corps — ne prouve pas que le corps est passé |
+| `POST /upload/youtube/v3/videos?uploadType=resumable` (corps JSON) | `429` quota | ambigu : le quota est évalué avant la lecture du corps, ne prouve pas que le corps est passé |
 | `POST /youtube/v3/videos?part=snippet` (corps JSON) | `429` quota « Video Uploads » | un POST sur l'endpoint de métadonnées est traité comme un insert |
 | `PATCH /youtube/v3/videos?part=snippet` | `404` corps vide | méthode non routée |
 | `GET /youtube/v3/channels?mine=true` | `200` + JSON complet | lectures fiables |
@@ -114,7 +114,7 @@ capacité réelle d'écriture.
   saisie de l'e-mail OK, clic sur `#identifierNext` (le bouton porte cet id, pas
   `#identifierNext button`) → redirection vers
   `accounts.google.com/v3/signin/rejected?continue=…` et message
-  « **Couldn't sign you in — This browser or app may not be secure.** »
+  « **Couldn't sign you in, This browser or app may not be secure.** »
 - Aucun champ mot de passe n'est présenté : le blocage est en amont de l'authentification.
 - Conséquence : le flux vault (« save login ») ne peut pas être utilisé pour Google, et la
   voie navigateur n'est viable que si une session Google préexiste dans le navigateur.

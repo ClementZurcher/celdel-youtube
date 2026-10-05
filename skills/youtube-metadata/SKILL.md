@@ -22,11 +22,11 @@ miniature, une catégorie ou « les métadonnées » d'une vidéo YouTube. Pour 
 transcript et en tirer un résumé ou des chapitres, utiliser d'abord `youtube-content`
 (helper `scripts/fetch_transcript.py`, option `--timestamps`).
 
-## Entrées nécessaires — et quoi faire s'il en manque
+## Entrées nécessaires : et quoi faire s'il en manque
 
 | Élément | Sert à | S'il est absent |
 |---|---|---|
-| Fichier vidéo ou transcript | Fonder le résumé, les chapitres, les tags | Demander le fichier/transcript, ou livrer une version provisoire signalée « provisoire — à compléter » |
+| Fichier vidéo ou transcript | Fonder le résumé, les chapitres, les tags | Demander le fichier/transcript, ou livrer une version provisoire signalée « provisoire, à compléter » |
 | Durée | Valider les horodatages, la longueur des chapitres | Ne pas inventer d'horodatages ; proposer des chapitres seulement si le transcript en contient |
 | Audience cible | Choisir le vocabulaire et les mots-clés | Demander, ou proposer deux variantes étiquetées |
 | Objectif (notoriété, lead, formation) | Prioriser le CTA | Demander, ou proposer un CTA neutre sans promesse |
@@ -40,7 +40,7 @@ transcript et en tirer un résumé ou des chapitres, utiliser d'abord `youtube-c
 - **Description** : 5 000 caractères max ; seuls les ~150 premiers sont visibles avant
   « Plus ». Ces premiers caractères = résumé d'une phrase + lien principal. Ensuite :
   chapitres, ressources citées, crédits, mentions commerciales.
-- **Chapitres** : règles strictes — premier horodatage exactement `00:00`, au moins
+- **Chapitres** : règles strictes, premier horodatage exactement `00:00`, au moins
   3 horodatages, ordre croissant, chaque chapitre ≥ 10 secondes ; `m:ss` sous une heure,
   `h:mm:ss` au-delà. Un horodatage faux invalide toute la liste : ne les établir que
   depuis le transcript, une liste de timecodes fournie, ou la durée réelle. Sinon, ne pas
@@ -87,7 +87,7 @@ tag1, tag2, …
 #…
 
 ## Catégorie suggérée
-… — justification en une ligne
+…, justification en une ligne
 
 ## Texte de miniature
 …
@@ -101,7 +101,7 @@ Préparation à valider
 - Statut par défaut : « Préparation à valider ». Un fichier fourni n'est pas une
   autorisation de téléverser.
 - Aucun outil d'upload n'est exposé par le toolkit `youtube` de Composio (27 outils,
-  ni `videos.insert` ni `videos.update`) — mais la publication reste possible par proxy
+  ni `videos.insert` ni `videos.update`), mais la publication reste possible par proxy
   Composio, par OAuth propre ou par le navigateur. Voir le skill `youtube-publish` pour
   les voies vérifiées, les limites de quota et le script `yt_upload.py`. Ne jamais
   annoncer un téléversement non vérifié.
