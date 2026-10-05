@@ -39,6 +39,14 @@ les blobs partent en parallèle.
 - **Erreurs avalées comme des succès** : la CLI ne renvoie pas de code HTTP. GitHub signe ses
   erreurs par un champ `documentation_url` — jamais présent sur un succès. Un `422` de création
   (« already exists ») traité comme un succès fait tomber le script au premier accès de champ.
+- **Gros fichiers : la limite est basse et bruyante.** Un fichier de 3,9 Mo (≈ 5,2 Mo en
+  base64) est refusé par le proxy : `413 Request Entity Too Large` sur
+  `POST /git/blobs`. Une charge de 256 Ko passe sans problème. Le seuil se situe donc
+  entre les deux, et l'échec n'arrive **qu'à l'étape blobs**, après un long envoi.
+  Avant de publier : lister les fichiers lourds (`git ls-files -z | xargs -0 du -h | sort -rh`)
+  et exclure via `.gitignore` tout ce qui dépasse quelques centaines de Ko. Vérifier d'abord
+  que ces fichiers sont réellement utilisés par le skill (`grep -r "assets/" SKILL.md`) :
+  dans la pratique, les gros assets sont souvent des restes de test.
 - **Gros fichiers** : jamais en ligne de commande, toujours via `@fichier` (base64).
 - **Le script de publication ne doit pas vivre dans le dossier publié**, sinon il se versionne
   lui-même au passage suivant (`git ls-files` le verra).
