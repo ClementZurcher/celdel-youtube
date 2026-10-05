@@ -1,0 +1,55 @@
+# Publier un dossier local sur GitHub via le proxy Composio
+
+Cas d'usage : mettre un dossier sur GitHub alors qu'aucun `gh` authentifié n'existe sur la
+machine, mais que la connexion **GitHub** est active dans Composio. Aucun secret n'est
+manipulé : l'authentification est injectée par Composio.
+
+Méthode : API **Git Data** (blobs → tree → commit → ref). Chaque fichier coûte une requête ;
+les blobs partent en parallèle.
+
+## Procédure
+
+1. **Identité** — `GET /user` : c'est ce compte qui possédera le dépôt. L'annoncer à
+   l'utilisateur avant de créer quoi que ce soit.
+2. **Créer le dépôt** — `POST /user/repos` avec
+   `{"name": "…", "private": true, "description": "…", "auto_init": true}`.
+   Le plan gratuit autorise les dépôts privés. Un échec « already exists » n'est pas un échec :
+   `GET /repos/{owner}/{name}` puis continuer.
+3. **Base** — `GET /repos/{o}/{r}/git/ref/heads/{branche}` → sha du commit ;
+   `GET /repos/{o}/{r}/git/commits/{sha}` → sha de l'arbre de base (`auto_init` en a créé un).
+4. **Blobs** — un `POST /repos/{o}/{r}/git/blobs` par fichier, corps
+   `{"content": "<base64>", "encoding": "base64"}`, en parallèle (4–6 fils). Consigner la
+   progression tous les 25 fichiers.
+5. **Arbre** — `POST /repos/{o}/{r}/git/trees` avec
+   `{"base_tree": "<sha>", "tree": [{"path": …, "mode": "100644"|"100755", "type": "blob", "sha": …}]}`.
+   Le mode `100755` se déduit du bit exécutable du fichier local (sinon les scripts arrivent
+   non exécutables).
+6. **Commit puis branche** — `POST /git/commits` avec `{message, tree, parents: [<sha base>]}`,
+   puis `PATCH /git/refs/heads/{branche}` avec `{"sha": <commit>, "force": false}`.
+7. **Vérifier en relisant le dépôt** — `GET /repos/{o}/{r}/git/trees/{branche}?recursive=1` et
+   comparer l'ensemble des chemins à `git ls-files` du dossier local (manquants / en trop).
+   Le code de sortie du script ne prouve rien.
+
+## Pièges
+
+- **Fichier de charge utile partagé entre appels parallèles** : la CLI lit le `@fichier` de
+  façon asynchrone ; un nom réutilisé puis supprimé provoque `ENOENT … /tmp/….json` et fait
+  échouer précisément les fichiers tombés dans la fenêtre. Nom unique par appel, et pas de
+  suppression pendant l'exécution du lot.
+- **Erreurs avalées comme des succès** : la CLI ne renvoie pas de code HTTP. GitHub signe ses
+  erreurs par un champ `documentation_url` — jamais présent sur un succès. Un `422` de création
+  (« already exists ») traité comme un succès fait tomber le script au premier accès de champ.
+- **Gros fichiers** : jamais en ligne de commande, toujours via `@fichier` (base64).
+- **Le script de publication ne doit pas vivre dans le dossier publié**, sinon il se versionne
+  lui-même au passage suivant (`git ls-files` le verra).
+- **Un dépôt fraîchement créé avec `auto_init` contient un `README.md`** : la première poussée
+  le remplace si le dossier local en fournit un.
+- **Publier depuis l'index** : un fichier non `git add` n'est pas publié. Construire la liste
+  avec `git ls-files`, jamais par un parcours disque.
+
+## Conséquence pour la distribution
+
+Un dépôt **privé** impose des identifiants GitHub pour `git clone` : un destinataire sans accès
+au dépôt ne peut pas installer. Avant d'annoncer « c'est installable », proposer l'une des
+solutions : l'ajouter comme collaborateur, publier un second dépôt public **filtré** (sans les
+contenus internes ni les skills tiers), ou livrer une archive.
